@@ -87,6 +87,38 @@
             background: rgba(255, 255, 255, 0.1);
         }
 
+        .back-btn {
+            background: var(--gradient-primary);
+            border: none;
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 10px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            box-shadow: var(--shadow-md);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .back-btn:hover {
+            background: var(--accent-hover);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .back-icon {
+            display: none;
+            width: 24px;
+            height: 24px;
+        }
+
+        .back-text {
+            display: block;
+        }
+
         main {
             padding: 3rem 0;
         }
@@ -666,6 +698,26 @@
                 grid-template-columns: 1fr;
             }
 
+            .header-content {
+                gap: 0.75rem;
+            }
+
+            .logo img {
+                height: 40px;
+            }
+
+            .back-icon {
+                display: block;
+            }
+
+            .back-text {
+                display: none;
+            }
+
+            .back-btn {
+                padding: 0.75rem;
+            }
+
             .section-header {
                 flex-direction: column;
                 align-items: flex-start;
@@ -711,9 +763,12 @@
                 <a href="index.html" class="logo">
                     <img src="/public/logo.jpg" alt="Vinyl Store Logo" style="height: 50px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);">
                 </a>
-                <nav class="nav-links">
-                    <a href="index.html" class="nav-link">Store</a>
-                </nav>
+                <a href="index.html" class="back-btn">
+                    <svg class="back-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 12H5M12 19l-7-7 7-7"/>
+                    </svg>
+                    <span class="back-text">← Back to Store</span>
+                </a>
             </div>
         </div>
     </header>
