@@ -70,22 +70,22 @@
         }
 
         .back-btn {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: var(--gradient-primary);
+            border: none;
             color: white;
             padding: 0.6rem 1.2rem;
             border-radius: 10px;
-            cursor: pointer;
             text-decoration: none;
             transition: all 0.3s ease;
             font-weight: 600;
+            box-shadow: var(--shadow-md);
         }
 
         .back-btn:hover {
-            background: white;
-            color: var(--primary-color);
+            background: var(--accent-hover);
+            color: white;
             transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
+            box-shadow: var(--shadow-lg);
         }
 
         main {
