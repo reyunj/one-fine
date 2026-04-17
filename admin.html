@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Admin Dashboard - Vinyl Store</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #000000;
+            --primary-light: #1a1a1a;
+            --secondary-color: #f5f5f5;
+            --accent-color: #dc2626;
+            --accent-hover: #b91c1c;
+            --text-dark: #000000;
+            --text-light: #666666;
+            --border-color: #e0e0e0;
+            --success-color: #dc2626;
+            --success-hover: #b91c1c;
+            --gradient-primary: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+            --gradient-success: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        header {
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: var(--shadow-md);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            color: white;
+            text-decoration: none;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        main {
+            padding: 3rem 0;
+        }
+
+        .dashboard-header {
+            margin-bottom: 2rem;
+        }
+
+        .dashboard-title {
+            font-size: 2rem;
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .dashboard-subtitle {
+            color: var(--text-light);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-label {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .orders-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-color);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 3px solid;
+            border-image: var(--gradient-primary);
+            border-image-slice: 1;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .filter-controls {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .filter-controls-wrapper {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .filter-controls-wrapper::-webkit-scrollbar {
+            display: none;
+        }
+
+        .filter-dropdown {
+            display: none;
+            width: 100%;
+            max-width: 200px;
+            padding: 0.6rem 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-dropdown:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+        }
+
+        .filter-btn {
+            padding: 0.6rem 1.2rem;
+            border: 2px solid var(--border-color);
+            background: white;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .filter-btn:hover {
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+        }
+
+        .filter-btn.active {
+            background: var(--gradient-primary);
+            color: white;
+            border-color: transparent;
+        }
+
+        .orders-table-wrapper {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            border-radius: 12px;
+        }
+
+        .orders-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .order-card {
+            display: none;
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .order-card:hover {
+            box-shadow: var(--shadow-md);
+            border-color: var(--accent-color);
+        }
+
+        .order-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .order-card-id {
+            font-weight: 800;
+            color: var(--accent-color);
+            font-size: 1rem;
+        }
+
+        .order-card-body {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .order-card-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .order-card-label {
+            color: var(--text-light);
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .order-card-value {
+            font-weight: 600;
+            color: var(--text-dark);
+            text-align: right;
+        }
+
+        .order-card-total {
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 1.2rem;
+        }
+
+        .order-card-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            padding-top: 0.75rem;
+            border-top: 2px solid var(--border-color);
+        }
+
+        .order-card-actions .action-btn {
+            flex: 1;
+            padding: 0.6rem;
+        }
+
+        .orders-table th {
+            text-align: left;
+            padding: 1rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            border-bottom: 2px solid var(--border-color);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .orders-table td {
+            padding: 1.25rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .orders-table tr:hover {
+            background: var(--secondary-color);
+        }
+
+        .order-id {
+            font-weight: 700;
+            color: var(--accent-color);
+            font-size: 0.9rem;
+        }
+
+        .order-customer {
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .order-email {
+            color: var(--text-light);
+            font-size: 0.85rem;
+        }
+
+        .order-items-preview {
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .order-total {
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 1.1rem;
+        }
+
+        .order-status {
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-processing {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .status-shipped {
+            background: #e0e7ff;
+            color: #3730a3;
+        }
+
+        .status-delivered {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .order-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            padding: 0.4rem 0.8rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+        }
+
+        .view-btn {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .view-btn:hover {
+            background: var(--accent-hover);
+            transform: translateY(-2px);
+        }
+
+        .delete-btn {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .delete-btn:hover {
+            background: #fecaca;
+        }
+
+        .order-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            background: white;
+            border-radius: 20px;
+            overflow-y: auto;
+            box-shadow: var(--shadow-xl);
+            animation: slideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+
+        .modal-header {
+            padding: 2rem;
+            background: var(--primary-color);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .modal-header h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .close-modal {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-modal:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .order-detail-section {
+            margin-bottom: 2rem;
+        }
+
+        .detail-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .detail-item {
+            padding: 1rem;
+            background: var(--secondary-color);
+            border-radius: 12px;
+        }
+
+        .detail-label {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.25rem;
+        }
+
+        .detail-value {
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .order-items-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .order-item-card {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--secondary-color);
+            border-radius: 12px;
+        }
+
+        .order-item-image {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .order-item-info {
+            flex: 1;
+        }
+
+        .order-item-title {
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 0.25rem;
+        }
+
+        .order-item-details {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .order-item-price {
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .status-change-section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+            border-radius: 12px;
+        }
+
+        .status-select {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            background: white;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .status-select:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+        }
+
+        .update-status-btn {
+            width: 100%;
+            padding: 1rem;
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+            box-shadow: var(--shadow-md);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .update-status-btn:hover {
+            background: var(--accent-hover);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem;
+            color: var(--text-light);
+        }
+
+        .empty-icon {
+            font-size: 5rem;
+            margin-bottom: 1.5rem;
+            opacity: 0.5;
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .filter-dropdown {
+                display: block;
+            }
+
+            .filter-controls-wrapper {
+                display: none;
+            }
+
+            .orders-table-wrapper {
+                display: none;
+            }
+
+            .order-card {
+                display: block;
+            }
+
+            .detail-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .order-item-card {
+                flex-direction: column;
+            }
+
+            .order-item-image {
+                width: 100%;
+                height: 150px;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <a href="index.html" class="logo">
+                    <img src="/public/logo.jpg" alt="Vinyl Store Logo" style="height: 50px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);">
+                </a>
+                <nav class="nav-links">
+                    <a href="index.html" class="nav-link">Store</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <div class="dashboard-header">
+                <h1 class="dashboard-title">Admin Dashboard</h1>
+                <p class="dashboard-subtitle">Manage orders and track sales</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Total Orders</div>
+                    <div class="stat-value" id="totalOrders">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Total Revenue</div>
+                    <div class="stat-value" id="totalRevenue">₱0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Items Sold</div>
+                    <div class="stat-value" id="totalItems">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Average Order</div>
+                    <div class="stat-value" id="avgOrder">₱0</div>
+                </div>
+            </div>
+
+            <div class="orders-section">
+                <div class="section-header">
+                    <h2 class="section-title">Recent Orders</h2>
+                    <select class="filter-dropdown" id="filterDropdown" onchange="filterOrdersFromDropdown()">
+                        <option value="all">All Orders</option>
+                        <option value="pending">Pending</option>
+                        <option value="processing">Processing</option>
+                        <option value="shipped">Shipped</option>
+                        <option value="delivered">Delivered</option>
+                    </select>
+                    <div class="filter-controls-wrapper">
+                        <div class="filter-controls">
+                            <button class="filter-btn active" onclick="filterOrders('all')">All</button>
+                            <button class="filter-btn" onclick="filterOrders('pending')">Pending</button>
+                            <button class="filter-btn" onclick="filterOrders('processing')">Processing</button>
+                            <button class="filter-btn" onclick="filterOrders('shipped')">Shipped</button>
+                            <button class="filter-btn" onclick="filterOrders('delivered')">Delivered</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="orders-table-wrapper">
+                    <table class="orders-table">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Customer</th>
+                                <th>Items</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersTableBody">
+                        </tbody>
+                    </table>
+                </div>
+
+                <div id="orderCardsContainer"></div>
+
+                <div class="empty-state" id="emptyState" style="display: none;">
+                    <div class="empty-icon">📦</div>
+                    <h3>No orders yet</h3>
+                    <p>Orders will appear here once customers place them.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div class="order-modal" id="orderModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Order Details</h2>
+                <button class="close-modal" onclick="closeModal()">×</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let orders = [];
+        let currentFilter = 'all';
+
+        function loadOrders() {
+            const savedOrders = localStorage.getItem('vinylStoreOrders');
+            if (savedOrders) {
+                orders = JSON.parse(savedOrders);
+            }
+            updateDashboard();
+        }
+
+        function updateDashboard() {
+            updateStats();
+            renderOrdersTable();
+        }
+
+        function updateStats() {
+            const totalOrders = orders.length;
+            const totalRevenue = orders.reduce((sum, order) => sum + order.total, 0);
+            const totalItems = orders.reduce((sum, order) => sum + order.items.reduce((itemSum, item) => itemSum + item.quantity, 0), 0);
+            const avgOrder = totalOrders > 0 ? totalRevenue / totalOrders : 0;
+
+            document.getElementById('totalOrders').textContent = totalOrders;
+            document.getElementById('totalRevenue').textContent = '₱' + totalRevenue.toLocaleString();
+            document.getElementById('totalItems').textContent = totalItems;
+            document.getElementById('avgOrder').textContent = '₱' + Math.round(avgOrder).toLocaleString();
+        }
+
+        function renderOrdersTable() {
+            const tbody = document.getElementById('ordersTableBody');
+            const cardsContainer = document.getElementById('orderCardsContainer');
+            const emptyState = document.getElementById('emptyState');
+
+            let filteredOrders = orders;
+            if (currentFilter === 'pending') {
+                filteredOrders = orders.filter(order => order.status === 'pending' || !order.status);
+            } else if (currentFilter === 'processing') {
+                filteredOrders = orders.filter(order => order.status === 'processing');
+            } else if (currentFilter === 'shipped') {
+                filteredOrders = orders.filter(order => order.status === 'shipped');
+            } else if (currentFilter === 'delivered') {
+                filteredOrders = orders.filter(order => order.status === 'delivered');
+            }
+
+            if (filteredOrders.length === 0) {
+                tbody.innerHTML = '';
+                cardsContainer.innerHTML = '';
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+
+            // Render table for desktop
+            tbody.innerHTML = filteredOrders.map(order => `
+                <tr>
+                    <td><span class="order-id">${order.id}</span></td>
+                    <td>
+                        <div class="order-customer">${order.customer.firstName} ${order.customer.lastName}</div>
+                        <div class="order-email">${order.customer.email}</div>
+                    </td>
+                    <td>
+                        <div class="order-items-preview">${order.items.map(item => `${item.title} (${item.quantity})`).join(', ')}</div>
+                    </td>
+                    <td><span class="order-total">₱${order.total.toLocaleString()}</span></td>
+                    <td><span class="order-status status-${order.status || 'pending'}">${order.status ? order.status.charAt(0).toUpperCase() + order.status.slice(1) : 'Pending'}</span></td>
+                    <td>
+                        <div class="order-actions">
+                            <button class="action-btn view-btn" onclick="viewOrder('${order.id}')">View</button>
+                            <button class="action-btn delete-btn" onclick="deleteOrder('${order.id}')">Delete</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+
+            // Render cards for mobile
+            cardsContainer.innerHTML = filteredOrders.map(order => `
+                <div class="order-card">
+                    <div class="order-card-header">
+                        <span class="order-card-id">${order.id}</span>
+                        <span class="order-status status-${order.status || 'pending'}">${order.status ? order.status.charAt(0).toUpperCase() + order.status.slice(1) : 'Pending'}</span>
+                    </div>
+                    <div class="order-card-body">
+                        <div class="order-card-row">
+                            <span class="order-card-label">Customer</span>
+                            <span class="order-card-value">${order.customer.firstName} ${order.customer.lastName}</span>
+                        </div>
+                        <div class="order-card-row">
+                            <span class="order-card-label">Email</span>
+                            <span class="order-card-value" style="font-size: 0.85rem;">${order.customer.email}</span>
+                        </div>
+                        <div class="order-card-row">
+                            <span class="order-card-label">Items</span>
+                            <span class="order-card-value" style="font-size: 0.85rem; max-width: 50%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${order.items.map(item => `${item.title} (${item.quantity})`).join(', ')}</span>
+                        </div>
+                        <div class="order-card-row">
+                            <span class="order-card-label">Total</span>
+                            <span class="order-card-value order-card-total">₱${order.total.toLocaleString()}</span>
+                        </div>
+                    </div>
+                    <div class="order-card-actions">
+                        <button class="action-btn view-btn" onclick="viewOrder('${order.id}')">View</button>
+                        <button class="action-btn delete-btn" onclick="deleteOrder('${order.id}')">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterOrders(filter) {
+            currentFilter = filter;
+
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Sync dropdown value
+            document.getElementById('filterDropdown').value = filter;
+
+            renderOrdersTable();
+        }
+
+        function filterOrdersFromDropdown() {
+            const filter = document.getElementById('filterDropdown').value;
+            currentFilter = filter;
+
+            // Sync button active states
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.textContent.toLowerCase() === filter || (filter === 'all' && btn.textContent === 'All')) {
+                    btn.classList.add('active');
+                }
+            });
+
+            renderOrdersTable();
+        }
+
+        function viewOrder(orderId) {
+            const order = orders.find(o => o.id === orderId);
+            if (!order) return;
+
+            const modalBody = document.getElementById('modalBody');
+            modalBody.innerHTML = `
+                <div class="status-change-section">
+                    <h3 class="detail-title">Update Order Status</h3>
+                    <select class="status-select" id="statusSelect">
+                        <option value="pending" ${order.status === 'pending' ? 'selected' : ''}>📦 Order Placed</option>
+                        <option value="processing" ${order.status === 'processing' ? 'selected' : ''}>⚙️ Processing</option>
+                        <option value="shipped" ${order.status === 'shipped' ? 'selected' : ''}>🚚 Shipped/In Transit</option>
+                        <option value="delivered" ${order.status === 'delivered' ? 'selected' : ''}>✅ Delivered</option>
+                    </select>
+                    <button class="update-status-btn" onclick="updateOrderStatus('${order.id}')">Update Status</button>
+                </div>
+
+                <div class="order-detail-section">
+                    <h3 class="detail-title">Order Information</h3>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <div class="detail-label">Order ID</div>
+                            <div class="detail-value">${order.id}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Date</div>
+                            <div class="detail-value">${new Date(order.date).toLocaleDateString()}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Current Status</div>
+                            <div class="detail-value">${order.status || 'Pending'}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Payment Method</div>
+                            <div class="detail-value">${order.customer.paymentMethod || 'N/A'}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="order-detail-section">
+                    <h3 class="detail-title">Customer Information</h3>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <div class="detail-label">Name</div>
+                            <div class="detail-value">${order.customer.firstName} ${order.customer.lastName}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Email</div>
+                            <div class="detail-value">${order.customer.email}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Phone</div>
+                            <div class="detail-value">${order.customer.phone}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Address</div>
+                            <div class="detail-value">${order.customer.address}, ${order.customer.city} ${order.customer.zipCode}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="order-detail-section">
+                    <h3 class="detail-title">Order Items</h3>
+                    <div class="order-items-list">
+                        ${order.items.map(item => `
+                            <div class="order-item-card">
+                                <img src="${item.image}" alt="${item.title}" class="order-item-image">
+                                <div class="order-item-info">
+                                    <div class="order-item-title">${item.title}</div>
+                                    <div class="order-item-details">${item.artist} - ${item.size} × ${item.quantity}</div>
+                                    <div class="order-item-price">₱${(item.price * item.quantity).toLocaleString()}</div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <div class="order-detail-section">
+                    <h3 class="detail-title">Order Total</h3>
+                    <div class="detail-item" style="text-align: center; padding: 1.5rem;">
+                        <div class="detail-value" style="font-size: 2rem; background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">₱${order.total.toLocaleString()}</div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('orderModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('orderModal').style.display = 'none';
+        }
+
+        function deleteOrder(orderId) {
+            if (confirm('Are you sure you want to delete this order?')) {
+                orders = orders.filter(order => order.id !== orderId);
+                localStorage.setItem('vinylStoreOrders', JSON.stringify(orders));
+                updateDashboard();
+            }
+        }
+
+        function updateOrderStatus(orderId) {
+            const newStatus = document.getElementById('statusSelect').value;
+            const orderIndex = orders.findIndex(o => o.id === orderId);
+            
+            if (orderIndex !== -1) {
+                orders[orderIndex].status = newStatus;
+                localStorage.setItem('vinylStoreOrders', JSON.stringify(orders));
+                updateDashboard();
+                closeModal();
+                
+                // Show success message
+                const statusLabels = {
+                    'pending': 'Order Placed',
+                    'processing': 'Processing',
+                    'shipped': 'Shipped',
+                    'delivered': 'Delivered'
+                };
+                alert(`Order status updated to: ${statusLabels[newStatus]}`);
+            }
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('orderModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+
+        loadOrders();
+    </script>
+</body>
+</html>
